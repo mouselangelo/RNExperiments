@@ -1,19 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
-
+import ProgressDemoView from "./ui/views/ProgressDemoView";
 export default class App extends Component {
     render() {
         return (
-            <View style={styles.container}>
-            </View>
+            <ProgressDemoView />
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-});
