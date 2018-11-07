@@ -8,8 +8,10 @@
   },
   "dependencies": {
     "react": "16.6.0-alpha.8af6728",
+    "react-mixin": "^5.0.0",
     "react-native": "0.57.4",
-    "react-native-progress": "^3.5.0"
+    "react-native-progress": "^3.5.0",
+    "react-timer-mixin": "^0.13.4"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
