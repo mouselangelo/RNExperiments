@@ -1,41 +1,94 @@
+import PropTypes from "prop-types";
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import * as Progress from 'react-native-progress';
 import reactMixin from "react-mixin";
 import timerMixin from "react-timer-mixin";
 
+
+const propTypes = {
+    duration: PropTypes.number.isRequired,
+    interval: PropTypes.number,
+    onIntervalElapsed: PropTypes.func,
+    onTimeout: PropTypes.func,
+};
+
+const defaultProps = {
+    interval: 1000
+};
+
 class ProgressView extends Component {
 
-    state = {
-        progress: 0
-    };
+    constructor() {
+        super(...arguments);
+        this.state = {
+            remainingTime: this.props.duration,
+            previousTime: null,
+            timeoutId: null
+        };
+    }
 
-    componentDidMount() {
+    start() {
+        this.setState({
+            ...this.state,
+            startTime: Date.now()
+        });
         this.tick()
     }
 
     tick() {
-        if (this.state.progress < 1.0) {
-            this.setTimeout(() => {
-                this.setState({
-                    progress: this.state.progress + 0.005
-                })
-                this.tick();
-            }, 1 / 60);
+        const duration = this.props.duration;
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - (this.state.startTime || currentTime);
+        const remainingTime = duration - elapsedTime;
+        const isCompleted = remainingTime <= 0;
+
+        var previousTime = this.state.previousTime || 0;
+        const timeSincePreviousInterval = currentTime - previousTime;
+
+        if (timeSincePreviousInterval >= this.props.interval) {
+            previousTime = currentTime;
+            if (this.props.onIntervalElapsed) {
+                this.props.onIntervalElapsed({ remainingTime });
+            }
         }
+
+        if (isCompleted) {
+            if (this.props.onTimeout) {
+                this.props.onTimeout({ remainingTime: 0 })
+            }
+        }
+
+        clearTimeout(this.state.timeoutId);
+        this.setState({
+            timeoutId: isCompleted ? null : this.setTimeout(this.tick, 1 / 60),
+            remainingTime,
+            previousTime
+        });
     }
 
+    componentDidMount() {
+        this.start()
+    }
+
+
     render() {
+        const duration = this.props.duration;
+        const remainingTime = this.state.remainingTime || duration;
+        const elapsedTime = duration - remainingTime;
+        const progress = elapsedTime / duration;
         return (
             <View style={styles.temp}>
-                <Progress.Circle
-                    size={100}
-                    borderWidth={0}
-                    progress={this.state.progress}
-                    color="orange"
-                    thickness={4}
-                />
-            </View>
+                <TouchableWithoutFeedback>
+                    <Progress.Circle
+                        size={100}
+                        borderWidth={0}
+                        progress={progress}
+                        color="orange"
+                        thickness={4}
+                    />
+                </TouchableWithoutFeedback>
+            </View >
         );
 
     }
@@ -45,9 +98,13 @@ const styles = StyleSheet.create({
     temp: {
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#00000011"
     }
 });
 
 reactMixin(ProgressView.prototype, timerMixin);
+
+ProgressView.propTypes = propTypes;
+ProgressView.defaultProps = defaultProps;
 
 export default ProgressView;
