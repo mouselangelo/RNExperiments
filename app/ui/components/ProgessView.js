@@ -24,13 +24,15 @@ class ProgressView extends Component {
         this.state = {
             remainingTime: this.props.duration,
             previousTime: null,
-            timeoutId: null
+            timeoutId: null,
+            progress: 0
         };
     }
 
     start() {
         this.setState({
             ...this.state,
+            progress: 0,
             startTime: Date.now()
         });
         this.tick()
@@ -42,6 +44,7 @@ class ProgressView extends Component {
         const elapsedTime = currentTime - (this.state.startTime || currentTime);
         const remainingTime = duration - elapsedTime;
         const isCompleted = remainingTime <= 0;
+        var progress = elapsedTime / duration;
 
         var previousTime = this.state.previousTime || 0;
         const timeSincePreviousInterval = currentTime - previousTime;
@@ -54,16 +57,19 @@ class ProgressView extends Component {
         }
 
         if (isCompleted) {
+            progress = 1
             if (this.props.onTimeout) {
                 this.props.onTimeout({ remainingTime: 0 })
             }
         }
 
         clearTimeout(this.state.timeoutId);
+
         this.setState({
             timeoutId: isCompleted ? null : this.setTimeout(this.tick, 1 / 60),
             remainingTime,
-            previousTime
+            previousTime,
+            progress
         });
     }
 
@@ -73,17 +79,13 @@ class ProgressView extends Component {
 
 
     render() {
-        const duration = this.props.duration;
-        const remainingTime = this.state.remainingTime || duration;
-        const elapsedTime = duration - remainingTime;
-        const progress = elapsedTime / duration;
         return (
             <View style={styles.temp}>
                 <TouchableWithoutFeedback>
                     <Progress.Circle
                         size={100}
                         borderWidth={0}
-                        progress={progress}
+                        progress={this.state.progress}
                         color="orange"
                         thickness={4}
                     />
