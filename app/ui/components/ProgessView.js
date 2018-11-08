@@ -75,6 +75,10 @@ class ProgressView extends Component {
         this.start()
     }
 
+    componentWillUnmount() {
+        this.clearTimeout(this.state.timeoutId);
+    }
+
 
     render() {
         return (
