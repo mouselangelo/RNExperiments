@@ -19,15 +19,13 @@ const defaultProps = {
 
 class ProgressView extends Component {
 
-    constructor() {
-        super(...arguments);
-        this.state = {
-            remainingTime: this.props.duration,
-            previousTime: null,
-            timeoutId: null,
-            progress: 0
-        };
-    }
+    state = {
+        remainingTime: this.props.duration,
+        previousTime: null,
+        timeoutId: null,
+        startTime: null,
+        progress: 0
+    };
 
     start() {
         this.setState({
