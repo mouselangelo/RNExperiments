@@ -11,7 +11,10 @@
     "react": "16.6.0-alpha.8af6728",
     "react-mixin": "^5.0.0",
     "react-native": "0.57.4",
+    "react-native-circular-progress": "^1.0.1",
     "react-native-progress": "^3.5.0",
+    "react-native-slowlog": "^1.0.2",
+    "react-native-svg": "^8.0.8",
     "react-timer-mixin": "^0.13.4"
   },
   "devDependencies": {
